@@ -1,0 +1,8 @@
+{
+  "name": "DevPulse",
+  "description": "Voice-native ambient developer agent using Vapi, Qdrant, and Gemini for high-performance hands-free assistance.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": []
+}
