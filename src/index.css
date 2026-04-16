@@ -1,52 +1,106 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-mono: "Courier New", Courier, monospace;
 }
 
 :root {
-  --bg-color: #0c0d0e;
-  --card-bg: #151619;
-  --accent: #3b82f6;
-  --accent-glow: rgba(59, 130, 246, 0.4);
-  --text-primary: #FFFFFF;
-  --text-secondary: #8E9299;
+  --bg: #0C0D0F;
+  --surface: #15171B;
+  --border: #24282E;
+  --text-main: #E2E4E9;
+  --text-muted: #848995;
+  --accent: #00FFC2;
+  --accent-soft: rgba(0, 255, 194, 0.1);
 }
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text-primary);
+  background-color: var(--bg);
+  color: var(--text-main);
   font-family: var(--font-sans);
   margin: 0;
+  height: 100vh;
   overflow: hidden;
 }
 
-.specialist-card {
-  background-color: var(--card-bg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+.panel {
+  background: var(--bg);
+  padding: 24px;
 }
 
-.terminal-text {
+.label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.rag-item {
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.rag-tag {
   font-family: var(--font-mono);
-  font-size: 0.825rem;
-  line-height: 1.5;
+  font-size: 10px;
+  background: var(--surface);
+  padding: 2px 6px;
+  border-radius: 2px;
+  color: var(--accent);
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 20px var(--accent-glow); }
-  100% { transform: scale(1); opacity: 0.8; }
+.voice-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
 }
 
-.is-active-pulse {
-  animation: pulse 2s infinite ease-in-out;
-  background-color: var(--accent);
+.control-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 8px;
 }
 
-.is-idle-pulse {
-  background-color: var(--text-secondary);
-  opacity: 0.3;
+.latency-meter {
+  height: 4px;
+  width: 100%;
+  background: #222;
+  border-radius: 2px;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.latency-fill {
+  position: absolute;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.bar {
+  width: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.3; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+.voice-bar {
+  animation: wave 1.2s infinite ease-in-out;
 }

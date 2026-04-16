@@ -27,7 +27,29 @@ async function startServer() {
   const qdrant = hasQdrant ? new QdrantClient({
     url: process.env.QDRANT_URL,
     apiKey: process.env.QDRANT_API_KEY,
+    checkCompatibility: false,
   }) : null;
+
+  const getQdrantClient = (overrides?: { url?: string; apiKey?: string }) => {
+    if (overrides?.url && overrides?.apiKey) {
+      return new QdrantClient({
+        url: overrides.url,
+        apiKey: overrides.apiKey,
+        checkCompatibility: false,
+      });
+    }
+    return qdrant;
+  };
+
+  app.get('/api/health', (req, res) => {
+    res.json({ 
+      status: 'ok', 
+      qdrant: !!process.env.QDRANT_URL,
+      gemini: !!process.env.GEMINI_API_KEY,
+      vapi: !!process.env.VAPI_API_KEY,
+      webhookUrl: `${process.env.APP_URL || 'http://localhost:3000'}/api/vapi/webhook`
+    });
+  });
 
   // Vapi "Server URL" / Webhook Endpoint for RAG
   app.post('/api/vapi/webhook', async (req, res) => {
@@ -36,16 +58,23 @@ async function startServer() {
     if (message?.type === 'tool-calls' || message?.type === 'function-call') {
       const toolCall = message.toolCalls?.[0] || message.functionCall;
       
+      // Extract dynamic Qdrant keys from metadata if present
+      const metadata = req.body.call?.metadata || {};
+      const dynamicQdrant = getQdrantClient({
+        url: metadata.qdrantUrl,
+        apiKey: metadata.qdrantKey
+      });
+
       if (toolCall?.name === 'search_technical_docs') {
         const query = toolCall.arguments?.query || toolCall.parameters?.query;
         console.log('Searching Qdrant for:', query);
 
         let context = "No specific documentation found in local memory.";
         
-        if (qdrant) {
+        if (dynamicQdrant) {
           try {
             // Placeholder: real implementation would vectorize the query.
-            const searchResults = await qdrant.search('dev_docs', {
+            const searchResults = await dynamicQdrant.search('dev_docs', {
               vector: Array(1536).fill(0), // Mock vector
               limit: 3,
             });
